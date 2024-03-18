@@ -1,0 +1,20 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+<h1>Общее количество новостей - {{news|length}}</h1>
+
+{% for new in news %}
+    <h4 style="text-transform:uppercase">{{ new.title }}</h4>
+
+    ({{ new.datetime|date:'d M Y' }})
+    -- {{ new.content|truncatechars:21 }} --
+
+
+{% endfor %}
+{% endblock content %}

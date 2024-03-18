@@ -1,0 +1,17 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Article_1
+{% endblock title %}
+
+{% block content %}
+<h1>Новость</h1>
+
+<h3 style="text-transform:uppercase">{{ new.title }}</h3>
+    {{ new.content|censor }} <br>
+    <h5>{{ new.datetime|date:'d M Y' }}</h5>
+
+
+
+{% endblock content %}
