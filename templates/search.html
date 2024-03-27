@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Search
+{% endblock title %}
+
+{% block content %}
+<br><form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти" />
+</form>
+
+{% if search %}
+{% for news in search %}
+    <h4 style="text-transform:uppercase">{{ new.title }}</h4>
+    ({{ news.datetime|date:'d M Y' }})
+    -- {{ news.content|truncatechars:21 }} --
+    {{ news.author }}
+{% endfor %}
+
+{% else %}
+    <br><h4>По указанным параметрам новостей нет!</h4>
+{% endif %}
+
+
+
+{% endblock content %}
