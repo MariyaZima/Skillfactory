@@ -1,11 +1,15 @@
-from django.shortcuts import render
+
 from datetime import datetime
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from .models import Post, BaseRegisterForm
 from .filters import PostFilter
-from .forms import PostForm
-from django.http import HttpResponseRedirect
+from .forms import PostForm, UserLoginForm
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import User
+from flask import url_for
+from django.shortcuts import redirect
 
 
 class PostList(ListView):
@@ -45,7 +49,7 @@ class SearchList(ListView):
     template_name = 'search.html'
     context_object_name = 'search'
     filterset_class = PostFilter
-    #paginate_by = 2
+    # paginate_by = 2
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -100,3 +104,36 @@ class PostDelete(DeleteView):
             post.field_choice = 'AR'
         post.save()
         return super().form_valid(form)
+
+
+class PostUserUpdate(LoginRequiredMixin, LoginView):
+    template_name = 'login.html'
+    form_class = UserLoginForm
+    context_object_name = 'login'
+    success_message = 'Добро пожаловать на сайт!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Авторизация на сайте'
+        return context
+
+    def current_view(self, request):
+        current_user = request.user
+        if current_user.is_authenticated:
+            return redirect(url_for('news/'))
+        else:
+            return redirect(url_for('accounts/login/'))
+
+
+class BaseRegisterView(CreateView):
+    model = User
+    form_class = BaseRegisterForm
+    success_url = '/accounts/login/'
+    template_name = 'signup.html'
+
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'index.html'
+
+
+

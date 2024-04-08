@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.shortcuts import render
 from .models import Post
-from django.http import HttpResponseRedirect
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class PostForm(forms.ModelForm):
@@ -28,8 +27,22 @@ class PostForm(forms.ModelForm):
         title = cleaned_data.get("title")
         if title == content:
             raise ValidationError(
-            "Описание не должно быть идентичным названию."
-        )
+                "Описание не должно быть идентичным названию."
+            )
         return cleaned_data
+
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields['username'].widget.attrs['placeholder'] = 'Логин пользователя'
+            self.fields['password'].widget.attrs['placeholder'] = 'Пароль пользователя'
+            self.fields['username'].label = 'Логин'
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'autocomplete': 'off'
+            })
+
 
 
