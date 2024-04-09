@@ -5,4 +5,8 @@
 <div> Здесь может содержаться персональная информация для каждого пользователя </div>
 
 <button> <a href="/accounts/logout/">Выйти</a> </button>
+
+{% if is_not_authors %}
+<button> <a href="/news/"> Хочу быть автором!</a> </button>
+{% endif %}
 {% endblock %}
