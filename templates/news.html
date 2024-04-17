@@ -6,16 +6,22 @@ News
 {% endblock title %}
 
 {% block content %}
+{% if need_subscribed %}
+    <button><a href="{% url 'subscribe' news.id %}">Подписаться</a></button>
+{% endif %}
+
 <h1>Общее количество новостей - {{news|length}}</h1>
 
-
+<hr>
 
 {% for new in news %}
     <h4 style="text-transform:uppercase">{{ new.title }}</h4>
     ({{ new.datetime|date:'d M Y' }})
     -- {{ new.content|truncatechars:21 }} --
-    {{ new.get_field_choice_display }}
-
+    {{ new.category }}
+    <br>{% for category in new.category.all %}
+        <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+    {% endfor %}
 {% endfor %}
 
 {% for new in page_obj %}

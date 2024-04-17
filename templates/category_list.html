@@ -1,0 +1,32 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+News is category
+{% endblock title %}
+
+{% block content %}
+<h1>Общее количество новостей - {{category_list|length}}</h1>
+<hr>
+{% if is_not_subscriber %}
+    <p class=""><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btn-sm">Подписаться</a></p>
+{% endif %}
+
+{% for new in category_list.all %}
+    <h4 style="text-transform:uppercase">{{ new.title }}</h4>
+    ({{ new.datetime|date:'d M Y' }})
+    -- {{ new.content|truncatechars:21 }} --
+    {{ new.get_field_choice_display }}
+    <br>{% for category in new.category.all %}
+        <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+    {% endfor %}
+{% endfor %}
+
+{% for new in page_obj %}
+    {{ new.full_name|upper }}<br>
+    ...
+{% endfor %}
+
+
+{% endblock content %}
+
