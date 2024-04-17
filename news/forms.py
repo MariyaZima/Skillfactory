@@ -13,7 +13,7 @@ class PostForm(forms.ModelForm):
             'author',
             'title',
             'content',
-            'many_to_many_relation',
+            'category',
         ]
 
     def clean(self):

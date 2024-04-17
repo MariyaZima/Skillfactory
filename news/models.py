@@ -22,7 +22,12 @@ class Author(models.Model):
 
 
 class Category(models.Model):
+    objects = None
     name = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User, blank=True, null=True, related_name="categories")
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -41,7 +46,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     rating_art_new = models.IntegerField(default=0)
-    many_to_many_relation = models.ManyToManyField(Category, through='PostCategory')
+    category = models.ManyToManyField(Category, through='PostCategory')
 
     def like(self):
         self.rating_art_new += 1
@@ -58,7 +63,7 @@ class Post(models.Model):
         return f'{self.title} ({self.datetime})'
 
     def get_absolute_url(self):
-        return reverse('post_detail', args=[str(self.id)])
+        return f'/news/{self.id}'
 
 
 class PostCategory(models.Model):
