@@ -12,6 +12,7 @@ from flask import url_for
 from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 
 
 class PostList(ListView):
@@ -44,6 +45,16 @@ class NewsDetail(DetailView):
         context['time'] = datetime.utcnow()
         context['next_sale'] = None
         return context
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'product-{self.kwargs["pk"]}', None)
+        # Kэш очень похож на словарь, и метод get действует так же. \
+        # Он забирает значение по ключу, если его нет, то забирает None.
+        # Eсли объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class SearchList(ListView):

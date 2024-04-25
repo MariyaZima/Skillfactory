@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 
 
 class Author(models.Model):
@@ -24,7 +25,7 @@ class Author(models.Model):
 class Category(models.Model):
     objects = None
     name = models.CharField(max_length=255, unique=True)
-    subscribers = models.ManyToManyField(User, blank=True, null=True, related_name="categories")
+    subscribers = models.ManyToManyField(User, blank=True, related_name="categories")
 
     def __str__(self):
         return self.name
@@ -64,6 +65,10 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f'/news/{self.id}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'new-{self.pk}')  # затем удаляем его из кэша, чтобы сбросить его
 
 
 class PostCategory(models.Model):

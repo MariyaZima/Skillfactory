@@ -3,9 +3,10 @@ from .views import PostList, NewsDetail, SearchList, NewCreateView, PostUpdate, 
    IndexView, CategoryListView, subscribe
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import upgrade_me
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
-   path('', PostList.as_view(), name='post_list'),
+   path('', cache_page(60*5)(PostList.as_view()), name='post_list'),
    path('<int:pk>', NewsDetail.as_view(), name='post_detail'),
    path('search/', SearchList.as_view(), name='post_search'),
    path('create/', NewCreateView.as_view(), name='post_create'),
